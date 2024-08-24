@@ -3,8 +3,8 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
-from django.contrib.auth.forms import BookForm
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.forms import ExampleForm, BookForm
+from django.contrib.auth.decorators import permission_required, login_required
 
 @permission_required('bookshelf.can_create', raise_exception=True)
 def create_book(request):
@@ -52,3 +52,16 @@ def delete_book(request, pk):
         book.delete()
         return redirect('book_list')
     return render(request, 'bookshelf/deleted-book.html', {'book':book})
+
+@login_required
+def form_example(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process form data here
+            form.save()  # Or any other processing
+            return redirect('success')  # Redirect after successful submission
+    else:
+        form = ExampleForm()
+
+    return render(request, 'form_example.html', {'form': form})
