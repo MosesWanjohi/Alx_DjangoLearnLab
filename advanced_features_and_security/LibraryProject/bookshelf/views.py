@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
-from django.contrib.auth.forms import ExampleForm, BookForm
+from .forms import ExampleForm, BookForm
 from django.contrib.auth.decorators import permission_required, login_required
 
 @permission_required('bookshelf.can_create', raise_exception=True)
