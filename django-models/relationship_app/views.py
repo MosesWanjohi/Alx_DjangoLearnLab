@@ -1,12 +1,14 @@
 from typing import Any
 from django.shortcuts import render,redirect
-from .models import Book, Library
+from .models import Book
+from .models import Library
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import permission_required
+from .models import UserProfile
 
 
 
@@ -14,7 +16,7 @@ from django.contrib.auth.decorators import permission_required
 #Function-based views
 def list_books(request):
     books = Book.objects.all() #fetching all books from the database
-    context = {'list_books':books} #creates a context dictionary with list of books
+    context = {'books':books} #creates a context dictionary with list of books
     return render(request, 'relationship_app/list_books.html', context)
 
 #class-based view for listing books in a library
