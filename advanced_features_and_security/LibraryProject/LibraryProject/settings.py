@@ -83,7 +83,12 @@ WSGI_APPLICATION = 'LibraryProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.mysql',
+        'NAME': 'library',  # Replace with your database name
+        'USER': 'root',  # Replace with your database user
+        'PASSWORD': '{<alx_be_Python#@!2024!>}',  # Replace with your database password
+        'HOST': 'localhost',  # Set to your MySQL server's address (e.g., 'localhost')
+        'PORT': '3306',
     }
 }
 
