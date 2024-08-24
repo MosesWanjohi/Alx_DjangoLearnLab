@@ -1,32 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
-
+from django.conf import settings
+from relationship_app.models import Book
 
 # Create your models here.
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.CharField(max_length=100)
-    publication_year = models.IntegerField()
+#class Book(models.Model):
+#    title = models.CharField(max_length=200)
+#    author = models.CharField(max_length=100)
+#    publication_year = models.IntegerField()
 
-    def __str__(self):
-        return f"{self.title} by {self.author} ({self.publication_year})"
+#    def __str__(self):
+#        return f"{self.title} by {self.author} ({self.publication_year})"
     
-
-#Custom User Model by extending AbstractUser
-#from django.contrib.auth.models import AbstractUser
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField()
-    profile_photo = models.ImageField(upload_to='profile_photos', blank=True, null=True)
-
-class UserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         
         #Validating Email
         if not email:
             raise ValueError('User must have an email address')
         #Fetching and normalizing email
-        user=self.model(email=self.normalize_email(email)),
+        user=self.model(email=self.normalize_email(email))
 
         #Setting password (hashes password)
         user.set_password(password)
@@ -43,3 +37,12 @@ class UserManager(BaseUserManager):
         user.save(self._db)
         return user
       
+#Custom User Model by extending AbstractUser
+#from django.contrib.auth.models import AbstractUser
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField()
+    profile_photo = models.ImageField(upload_to='profile_photos', blank=True, null=True)
+
+    objects = CustomUserManager()
+    def __str__(self):
+        return self.email
