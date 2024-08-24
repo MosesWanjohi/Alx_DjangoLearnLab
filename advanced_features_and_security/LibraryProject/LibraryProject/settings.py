@@ -25,11 +25,7 @@ SECRET_KEY = 'django-insecure-9t_6g7vf!diwk4dj!8ldcp!c=4$43-g)u2y^z5!)kwxf3*-4a0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
-#Setting up User Model by specifying the model to use
-AUTH_USER_MODEL = 'bookshelf.CustomUser'
-
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -41,10 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'bookshelf',
-    'relationship_app.apps.RelationshipAppConfig',
-    
+    'bookshelf.apps.BookshelfConfig',
+
 ]
+#Setting up User Model by specifying the model to use
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,7 +58,7 @@ ROOT_URLCONF = 'LibraryProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,20 +80,11 @@ WSGI_APPLICATION = 'LibraryProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.mysql',
-        'NAME': 'library',  # Replace with your database name
-        'USER': 'root',  # Replace with your database user
-        'PASSWORD': '{<alx_be_Python#@!2024!>}',  # Replace with your database password
-        'HOST': 'localhost',  # Set to your MySQL server's address (e.g., 'localhost')
-        'PORT': '3306',
+        'NAME': BASE_DIR / 'db.sqlite3',       
     }
 }
 
 #AUTHENTICATION SETTINGS
-
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -132,7 +120,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
