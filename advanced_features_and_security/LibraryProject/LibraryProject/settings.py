@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'bookshelf.apps.BookshelfConfig',
-
+    'csp',
 ]
 #Setting up User Model by specifying the model to use
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
