@@ -127,7 +127,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Updating DRF settings in settings.py to include token authentication in the
 #default authentication classes
-DEFAULT_AUTHENTICATION_CLASSES = ('rest_framework.authentication.TokenAuthentication',)
 
-#default permission classes
-DEFAULT_PERMISSION_CLASSES = ('rest_framework.permissions.IsAuthenticated',)
+REST_FRAMEWORK = {
+    #default authentication classes
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    #default permission classes
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
+}
