@@ -9,7 +9,10 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['title', 'publication_year', 'author'] #fields = '__all__'
-
+        for publication_year in fields:
+            if publication_year > 'publication_year':
+                raise serializers.ValidationError('Publication year cannot be in the future')
+            
 
 
 
