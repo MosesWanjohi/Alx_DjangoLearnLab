@@ -3,7 +3,7 @@ from rest_framework import mixins, generics
 from .serializers import BookSerializer, AuthorSerializer
 from .models import Book
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import serializers
 class BookListView(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
