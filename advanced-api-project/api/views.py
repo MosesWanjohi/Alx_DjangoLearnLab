@@ -1,11 +1,11 @@
 
-from rest_framework import mixins, generics
+from rest_framework import generics
 from .serializers import BookSerializer, AuthorSerializer
 from .models import Book
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import serializers
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework
 from rest_framework import filters
 
 class BookListView(generics.ListAPIView):
@@ -15,7 +15,7 @@ class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
    
 #filtering using various attributes
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [rest_framework.DjangoFilterBackend]
     filterset_fields = ['title', 'author', 'publication_year']
 
 #Implementing search functionality
