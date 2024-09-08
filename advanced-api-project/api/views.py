@@ -5,18 +5,35 @@ from .models import Book
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import serializers
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
 class BookListView(generics.ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+   
+#filtering using various attributes
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', 'author', 'publication_year']
+
+#Implementing search functionality
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'author']
+
+#Implementing ordering functionality
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['title', 'publication_year']
+
+#Creating a BookDetailView for retrieving a single book by ID
+class BookRetrieveView(generics.RetrieveAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Book.objects.all()
     serializer_class =BookSerializer
 
-#Creating a BookDetailView for retrieving a single book by ID
-class BookDetailView(generics.DetailAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Book.objects.all()
-    serializer_class =BookSerializer
+
 
 #Creating a BookCreateView for adding a new book
 class BookCreateView(generics.CreateAPIView):
