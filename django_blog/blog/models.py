@@ -31,17 +31,17 @@ class Post(models.Model):
         return self.title    
 
 class Comment(models.Model):
-    post = models.ForeignKey(post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
-    created_at = models.DateTimeField(default=datetime.now)
+    Published_at = models.DateTimeField(default=datetime.now)
     updated_at = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.content   
     
 class Tag(models.Model):
-    post = models.ManyToManyField (post)
+    post = models.ManyToManyField (Post)
     name = models.CharField(max_length=50)   
 
     def __str__(self):
