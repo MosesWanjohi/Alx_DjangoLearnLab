@@ -1,39 +1,35 @@
 from django.shortcuts import render, redirect
-from .models import User
-from django.contrib.auth import login
-from django.urls import reverse_lazy
-from .forms import CustomUserCreationForm
-from django.contrib.auth.forms import UserChangeForm
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-# Create your views here.
+from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm
+from django.contrib.auth import login
 
-#Register View
-def register(request):
+# Register View
+def register_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            login(request, form.instance)
+            user = form.save()
+            login(request, user)
             return redirect('home')
     else:
         form = CustomUserCreationForm()
     return render(request, 'blog/register.html', {'form': form})
 
-
 @login_required
-def profile_view(request): 
+def profile_view(request):
     if request.method == 'POST':
-        form = UserChangeForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
             return redirect('profile')
     else:
-        form = UserChangeForm(instance=request.user)
-    return render(request, 'blog/profile.html', {'form': form})        
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
 
-def posts_view(request):
-    return render(request, 'blog/posts.html')
+    context = {'u_form': u_form, 'p_form': p_form}
+    return render(request, 'blog/profile.html', context)
 
 def home_view(request):
-    return render(request, 'blog/base.html')
+    return render(request, 'home.html')
