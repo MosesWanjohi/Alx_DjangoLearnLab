@@ -42,8 +42,10 @@ class Comment(models.Model):
         return self.content   
     
 class Tag(models.Model):
-    post = models.ManyToManyField (Post)
-    name = models.CharField(max_length=50)   
+    post = models.ManyToManyField(Post)
+    name = models.CharField(max_length=50)  
+
+    tags = TaggableManager()
 
     def __str__(self):
         return self.name 
