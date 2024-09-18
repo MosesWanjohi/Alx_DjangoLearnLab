@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
+from rest_framework.authtoken.models import Token
+from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.validators import ValidationError
@@ -11,9 +13,6 @@ from rest_framework.validators import ValidationError
 #User registration ApiView
 
 class RegisterUser(APIView):
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [AllowAny]
-
 #Getting data from user registration request
     def post(self, request, format=None):
         username = request.data.get('username')
