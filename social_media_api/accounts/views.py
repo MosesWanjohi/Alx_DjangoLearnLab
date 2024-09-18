@@ -1,38 +1,44 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.views.generic import CreateView
-from django.urls import reverse_lazy
-from django.contrib.auth import login, views
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from django.contrib.auth.models import User
+from accounts.models import CustomUser
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.validators import ValidationError
 # Create your views here.
 
-#User registration view
-class SignUpView(CreateView):
-    form_class = UserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'registration/signup.html'
+#User registration ApiView
 
-    def form_valid(self, form):
-        if form.is_valid():
-            user = form.save()
-            login(self.request, user)
-            return super().form_valid(form)
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
-     
-#User login view
+class RegisterUser(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [AllowAny]
 
-class LoginView(views.LoginView):
-    form_class = AuthenticationForm
-    success_url = reverse_lazy('home')
-    template_name = 'registration/login.html'
+#Getting data from user registration request
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        email = request.data.get('email')
 
+    #Data validation
+        if not username or not password or not email:
+            raise ValidationError('Please provide username, password and email')
+    
+    #New user registration
+        user = CustomUser.objects.create_user(username=username, password=password, email=email)
 
-#User logout view
-LoginRequiredMixin(login_url='login')
-class LogoutView(views.LogoutView):
-    success_url = reverse_lazy('login')
+        return Response({'message':'User registered successfully'})
+    
+    #User login ApiView
+    class LoginUser(APIView):
+        authentication_classes = [authentication.TokenAuthentication]
+        permission_classes = [IsAuthenticated]
 
+        def post(self, request, format=None):
+            username = request.data.get('username')
+            password = request.data.get('password')
+
+            user = CustomUser.objects.filter(username=username, password=password)
+
+            return Response({'message':'User logged in successfully'})
 
