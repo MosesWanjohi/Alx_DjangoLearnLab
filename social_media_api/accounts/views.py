@@ -12,7 +12,7 @@ from rest_framework.validators import ValidationError
 
 #User registration ApiView
 
-class RegisterUser(APIView):
+class RegisterUserView(APIView):
 #Getting data from user registration request
     def post(self, request, format=None):
         username = request.data.get('username')
@@ -29,15 +29,41 @@ class RegisterUser(APIView):
         return Response({'message':'User registered successfully'})
     
     #User login ApiView
-    class LoginUser(APIView):
-        authentication_classes = [authentication.TokenAuthentication]
-        permission_classes = [IsAuthenticated]
+class LoginUserView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
-        def post(self, request, format=None):
-            username = request.data.get('username')
-            password = request.data.get('password')
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        password = request.data.get('password')
 
-            user = CustomUser.objects.filter(username=username, password=password)
+        user = CustomUser.objects.filter(username=username, password=password)
 
+        if user:
             return Response({'message':'User logged in successfully'})
 
+        else:
+            return Response({'message':'Invalid credentials'})
+
+class UserProfileView(APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = request.user
+        data = {
+            'username': user.username,
+            'email': user.email,
+            'bio': user.bio,
+            'profile_picture': user.profile_picture,
+            'followers': user.followers.count(),
+        }
+       
+        return Response(request.data)
+
+    def put(self, request, format=None):
+        user = request.user
+        user.profile_picture = request.data.get('profile_picture')
+        user.bio = request.data.get('bio')
+        user.save()
+        return Response({'message': 'Profile updated successfully'})
