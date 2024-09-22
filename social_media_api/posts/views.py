@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, get_or_create
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -88,24 +88,24 @@ class LikeView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request, pk, *args, **kwargs):
         post = get_object_or_404(Post, pk=pk)
-        liked = post.likes.filter(author=request.user).exists()
-       
-        if liked:
-            post.likes.remove(request.user)
-            return Response({'message': 'Post unliked'}, status=status.HTTP_200_OK)
-        else:
-            post.likes.add(request.user)
 
-#creating notifications for the likes
+        #Using get_or_create method to manage likes
+        like, created = Like.objects.get_or_create(post=post, author=request.user)
+
+        #logic
+        if created:
+            #create notification if post liked for the first time
             Notification.objects.create(
                 recipient = post.author,
                 actor = request.user,
                 verb = 'liked',
                 content_type = ContentType.objects.get_for_model(Post),
                 object_id = post.id
-
             )
             return Response({'message': 'Post liked'}, status=status.HTTP_200_OK)
 
-
-
+        else:
+            #if like already exists
+            like.delete()
+            return Response({'message': 'Post unliked'}, status=status.HTTP_200_OK)
+     
