@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 # Create your models here.
 #Notification Model
 class Notification(models.Model):
-    recepient = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
+    recipient = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE)
     actor = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name='actor')
     verb = models.CharField(max_length=255)
     content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)

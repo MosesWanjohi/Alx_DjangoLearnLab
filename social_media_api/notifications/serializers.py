@@ -7,7 +7,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = [
             'id',
-            'recepient',
+            'recipient',
             'actor',
             'verb',
             'target',
