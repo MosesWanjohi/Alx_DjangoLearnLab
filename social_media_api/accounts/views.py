@@ -39,7 +39,7 @@ class RegisterUserView(APIView):
     #User login ApiView
 class LoginUserView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, format=None):
         username = request.data.get('username')
@@ -55,7 +55,7 @@ class LoginUserView(APIView):
 
 class UserProfileView(APIView):
     authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         user = request.user

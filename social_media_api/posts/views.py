@@ -6,6 +6,10 @@ from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import generics, permissions,status
+from rest_framework.views import APIView
+from rest_framework import authentication
 
 # Create your views here.
 #Views for posts
@@ -16,23 +20,14 @@ class PostViewSet(viewsets.ModelViewSet):
     filterset_fields = ['title', 'content']
     search_fields = ['title', 'content']
 
+#Creating posts
     def create(self, request, *args, **kwargs):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(serializer.errors)
-
-    def create_post(self, request, *args, **kwargs):
-        queryset = Post.objects.all()
-        serializer = PostSerializer(queryset, data=request.data)
-        if serializer.is_valid():
-
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def list(self, request, *args, **kwargs):
         queryset = Post.objects.all()
@@ -50,17 +45,19 @@ class PostViewSet(viewsets.ModelViewSet):
 
 #comment viewsets
 class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
     def create(self, request, *args, **kwargs):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
-        quueryset = Comment.objects.all()
-        serializer = CommentSerializer(quueryset, many=True)
+        queryset = Comment.objects.all()
+        serializer = CommentSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -74,7 +71,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     
 #Implementing Feed Functionality
 #Feed Generation
-class FeedViewSet(viewsets.ModelViewSet):
-    def list(self, request, *args, **kwargs):
-        post = Post.objects.order_by('-created_at')
-        return Response(post)
+class FeedView(generics.GenericAPIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        following_users = request.user.following.all()
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        serializer = PostSerializer(posts, many=True)   
+        return Response(serializer.data, status=status.HTTP_200_OK)
