@@ -12,3 +12,6 @@ class Notification(models.Model):
     object_id = models.PositiveIntegerField()
     target = GenericForeignKey('content_type', 'object_id')
     timestamp = models.DateTimeField(auto_now_add=True)
+
+def __str__(self):
+        return self.verb
