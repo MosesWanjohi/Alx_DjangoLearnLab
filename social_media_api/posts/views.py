@@ -1,8 +1,9 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_or_create
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Post, Comment
+from .models import Post, Comment, Like
+from notifications.models import Notification
 from .serializers import PostSerializer, CommentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -10,6 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import generics, permissions,status
 from rest_framework.views import APIView
 from rest_framework import authentication
+from django.contrib.contenttypes.models import ContentType
 
 # Create your views here.
 #Views for posts
@@ -84,11 +86,26 @@ class FeedView(generics.GenericAPIView):
 class LikeView(generics.GenericAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    def post(self, request, *args, **kwargs):
-        post = get_object_or_404(Post, id=request.data.get('post_id'))
-        if post.likes.filter(id=request.user.id).exists():
+    def post(self, request, pk, *args, **kwargs):
+        post = get_object_or_404(Post, pk=pk)
+        liked = post.likes.filter(author=request.user).exists()
+       
+        if liked:
             post.likes.remove(request.user)
             return Response({'message': 'Post unliked'}, status=status.HTTP_200_OK)
         else:
             post.likes.add(request.user)
+
+#creating notifications for the likes
+            Notification.objects.create(
+                recipient = post.author,
+                actor = request.user,
+                verb = 'liked',
+                content_type = ContentType.objects.get_for_model(Post),
+                object_id = post.id
+
+            )
             return Response({'message': 'Post liked'}, status=status.HTTP_200_OK)
+
+
+
