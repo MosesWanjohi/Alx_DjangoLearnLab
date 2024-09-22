@@ -87,7 +87,7 @@ class LikeView(generics.GenericAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request, pk, *args, **kwargs):
-        post = get_object_or_404(Post, pk=pk)
+        post = generics.get_object_or_404(Post, pk=pk)
 
         #Using get_or_create method to manage likes
         like, created = Like.objects.get_or_create(user=request.user, post=post)
