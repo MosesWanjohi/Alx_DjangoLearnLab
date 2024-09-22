@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -79,3 +79,16 @@ class FeedView(generics.GenericAPIView):
         posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
         serializer = PostSerializer(posts, many=True)   
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+#Like Functionality
+class LikeView(generics.GenericAPIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        post = get_object_or_404(Post, id=request.data.get('post_id'))
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            return Response({'message': 'Post unliked'}, status=status.HTTP_200_OK)
+        else:
+            post.likes.add(request.user)
+            return Response({'message': 'Post liked'}, status=status.HTTP_200_OK)

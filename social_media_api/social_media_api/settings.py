@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'posts.apps.PostsConfig',
     'django_filters',
+    'notifications.apps.NotificationsConfig',
 ]
     
 
