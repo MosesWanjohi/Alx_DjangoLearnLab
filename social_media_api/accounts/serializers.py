@@ -26,6 +26,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
     
     #User login serializer:
-    class LoginUserSerializer(serializers.Serializer):
-        username = serializers.CharField()
-        password = serializers.CharField()
+class LoginUserSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        user = get_user_model().objects.filter(username=data['username']).first()
+        if user is None:
+            raise serializers.ValidationError('User does not exist')
+        if not user.check_password(data['password']):
+            raise serializers.ValidationError('Incorrect password')
+        return user
