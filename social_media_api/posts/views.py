@@ -26,7 +26,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def create_post(self, request, *args, **kwargs):
         queryset = Post.objects.all()
-        serializer = PostSerializer(data=request.data)
+        serializer = PostSerializer(queryset, data=request.data)
         if serializer.is_valid():
 
             serializer.save()
@@ -35,8 +35,8 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors)
         
     def list(self, request, *args, **kwargs):
-        quueryset = Post.objects.all()
-        serializer = PostSerializer(quueryset, many=True)
+        queryset = Post.objects.all()
+        serializer = PostSerializer(queryset, many=True)
         return Response(serializer.data)
     
     def retrieve(self, request, *args, **kwargs):
@@ -71,3 +71,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
+    
+#Implementing Feed Functionality
+#Feed Generation
+class FeedViewSet(viewsets.ModelViewSet):
+    def list(self, request, *args, **kwargs):
+        post = Post.objects.order_by('-created_at')
+        return Response(post)

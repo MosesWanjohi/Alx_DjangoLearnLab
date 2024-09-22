@@ -24,7 +24,7 @@ class PostSerializer(serializers.ModelSerializer):
 #Comment Serializer
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    post = serializers.PrimaryKeyRelatedField(querryset=Post.objects.all())
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
     class Meta:
         model = Comment
         fields = [
